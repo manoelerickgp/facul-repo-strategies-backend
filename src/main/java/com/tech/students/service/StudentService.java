@@ -15,41 +15,42 @@ public class StudentService {
 
     private static Map<Long, Student> studentList = new HashMap<>();
 
-    private ResponseEntity<Student> getStudentById(Long id) {
+    public ResponseEntity<Student> getStudentById(Long id) {
         Student student = studentList.get(id);
         if (student == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         return ResponseEntity.status(HttpStatus.OK).body(student);
     }
 
-    private List<Student> getAllStudents() {
-        return new ArrayList<>(studentList.values());
+    public ResponseEntity<List<Student>> getAllStudents() {
+        var students = studentList.values().stream().toList();
+        return ResponseEntity.ok().body(students);
     }
 
-    private ResponseEntity<Student> save(Long id, Student studentReq) {
+    public ResponseEntity<Student> save(Student studentReq) {
         Student student = studentList.get(studentReq.getId());
         if (student !=  null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        if (studentList.containsKey(id)) {
+        if (!studentList.containsKey(studentReq.getId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
-        studentList.put(id, studentReq);
+        studentList.put(studentReq.getId(), studentReq);
         return ResponseEntity.status(HttpStatus.OK).body(studentReq);
     }
 
-    private ResponseEntity<Student> update(Long id, Student studentReq) {
-        boolean existsStudent = studentList.containsKey(id);
+    public ResponseEntity<Student> update(Student studentReq) {
+        boolean existsStudent = studentList.containsKey(studentReq.getId());
         if (existsStudent) {
             studentList.put(studentReq.getId(), studentReq);
             return ResponseEntity.status(HttpStatus.OK).body(studentReq);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(studentReq);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(studentReq);
     }
 
-    private ResponseEntity<String> delete(Long id) {
-        boolean existsStudent = studentList.containsKey(id);
-        if (!existsStudent) {
+    public ResponseEntity<String> delete(Long id) {
+        Student student = studentList.get(id);
+        if (student == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student not found");
         }
         studentList.remove(id);
