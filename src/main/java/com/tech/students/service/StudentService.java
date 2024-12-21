@@ -41,6 +41,7 @@ public class StudentService {
     private ResponseEntity<Student> update(Long id, Student studentReq) {
         boolean existsStudent = studentList.containsKey(id);
         if (existsStudent) {
+            studentList.put(studentReq.getId(), studentReq);
             return ResponseEntity.status(HttpStatus.OK).body(studentReq);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(studentReq);
