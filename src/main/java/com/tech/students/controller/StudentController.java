@@ -35,12 +35,12 @@ public class StudentController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Student> update(@RequestBody Student student) {
-        return service.update(student);
+    public ResponseEntity<Student> update(@PathVariable Long id, @RequestBody Student student) {
+        return service.update(id, student);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> delete(@RequestParam Long id) {
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         return service.delete(id);
     }
 }

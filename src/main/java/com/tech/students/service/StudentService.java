@@ -32,15 +32,15 @@ public class StudentService {
         if (student !=  null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        if (!studentList.containsKey(studentReq.getId())) {
+        if (studentList.containsKey(studentReq.getId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
         studentList.put(studentReq.getId(), studentReq);
         return ResponseEntity.status(HttpStatus.OK).body(studentReq);
     }
 
-    public ResponseEntity<Student> update(Student studentReq) {
-        boolean existsStudent = studentList.containsKey(studentReq.getId());
+    public ResponseEntity<Student> update(Long id, Student studentReq) {
+        boolean existsStudent = studentList.containsKey(id);
         if (existsStudent) {
             studentList.put(studentReq.getId(), studentReq);
             return ResponseEntity.status(HttpStatus.OK).body(studentReq);
