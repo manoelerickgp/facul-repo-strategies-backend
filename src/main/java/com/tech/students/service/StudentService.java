@@ -1,6 +1,8 @@
 package com.tech.students.service;
 
 import com.tech.students.domain.Student;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,7 @@ import java.util.Map;
 @Service
 public class StudentService {
 
-    private static Map<Long, Student> studentList = new HashMap<>();
+    private static final Map<Long, Student> studentList = new HashMap<>();
 
     public ResponseEntity<Student> getStudentById(Long id) {
         Student student = studentList.get(id);
