@@ -4,3 +4,11 @@ server:
 spring:
   application:
     name: ${APPLICATION_NAME:student-service}
+
+  servlet:
+      multipart:
+        max-file-size: ${MAX_SIZE:200MB}
+        max-request-size: ${MAX_REQUEST-SIZE:215MB}
+
+file:
+  uploadDir: ${UPLOAD_DIR:/Users/Manoel/uploadsAPI}
