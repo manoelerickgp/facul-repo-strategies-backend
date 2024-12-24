@@ -1,9 +1,11 @@
 package com.tech.students.service;
 
 import com.tech.students.config.FileStorageProperties;
+import com.tech.students.exception.FileNotFoundException;
 import com.tech.students.exception.UploadFileException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,6 +55,21 @@ public class FileService {
             return fileName;
         } catch (IOException e) {
             throw new UploadFileException("Erro ao tentar salvar o arquivo");
+        }
+    }
+
+    public Resource loadFile(String fileName) {
+        try {
+            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists()) {
+                return resource;
+            }
+            else {
+                throw new FileNotFoundException("File not found");
+            }
+        } catch (Exception e) {
+            throw new FileNotFoundException("File not found");
         }
     }
 
