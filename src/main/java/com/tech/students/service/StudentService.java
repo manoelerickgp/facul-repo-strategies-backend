@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +53,6 @@ public class StudentService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student not found");
         }
         studentList.remove(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Student Deleted  successfully");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Student Deleted successfully");
     }
 }
