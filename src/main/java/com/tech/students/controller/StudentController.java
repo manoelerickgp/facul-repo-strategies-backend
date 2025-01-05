@@ -3,6 +3,8 @@ package com.tech.students.controller;
 import com.tech.students.domain.Student;
 import com.tech.students.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +27,12 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Student>> findAllStudents() {
-        return service.getAllStudents();
+    public ResponseEntity<Page<Student>> findAllStudents(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "5") Integer itemsPerPage
+    ) {
+
+        return service.getAllStudents(PageRequest.of(page, itemsPerPage));
     }
 
     @PostMapping

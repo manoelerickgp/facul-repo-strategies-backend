@@ -4,6 +4,8 @@ import com.tech.students.domain.Student;
 import com.tech.students.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,8 +30,8 @@ public class StudentService {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
-    public ResponseEntity<List<Student>> getAllStudents() {
-        var students = repository.findAll();
+    public ResponseEntity<Page<Student>> getAllStudents(PageRequest pageRequest) {
+        var students = repository.findAll(pageRequest);
         return ResponseEntity.ok().body(students);
     }
 
