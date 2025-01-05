@@ -17,6 +17,10 @@ public class FileController {
 
     private FileService fileService;
 
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
+
     @PostMapping(value = "/upload")
     public File uploadFile(@RequestParam("file") MultipartFile file) {
         String fileName = fileService.saveFile(file);
@@ -29,7 +33,7 @@ public class FileController {
     }
 
     @GetMapping(value = "/downloadFile/{fileName}")
-    public ResponseEntity<Resource> downloadFile(String fileName, HttpServletRequest request) {
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
 
         Resource resource = fileService.loadFile(fileName);
         String contentType = fileService.getContentType(request, resource);
