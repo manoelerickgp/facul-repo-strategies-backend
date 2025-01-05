@@ -1,6 +1,7 @@
 package com.tech.students.service;
 
 import com.tech.students.domain.Student;
+import com.tech.students.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,47 +15,53 @@ import java.util.Map;
 @Service
 public class StudentService {
 
-    private static final Map<Long, Student> studentList = new HashMap<>();
+    private StudentRepository repository;
+
+    public StudentService(StudentRepository repository) {
+        this.repository = repository;
+    }
+
 
     public ResponseEntity<Student> getStudentById(Long id) {
-        Student student = studentList.get(id);
-        if (student == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        return ResponseEntity.status(HttpStatus.OK).body(student);
+        if (repository.existsById(id))
+            return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id).get());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     public ResponseEntity<List<Student>> getAllStudents() {
-        var students = studentList.values().stream().toList();
+        var students = repository.findAll();
         return ResponseEntity.ok().body(students);
     }
 
     public ResponseEntity<Student> save(Student studentReq) {
-        Student student = studentList.get(studentReq.getId());
-        if (student !=  null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        if (studentList.containsKey(studentReq.getId())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
-        }
-        studentList.put(studentReq.getId(), studentReq);
-        return ResponseEntity.status(HttpStatus.OK).body(studentReq);
+        Student studentSaved = repository.save(studentReq);
+        return ResponseEntity.status(HttpStatus.CREATED).body(studentSaved);
     }
 
     public ResponseEntity<Student> update(Long id, Student studentReq) {
-        boolean existsStudent = studentList.containsKey(id);
-        if (existsStudent) {
-            studentList.put(studentReq.getId(), studentReq);
-            return ResponseEntity.status(HttpStatus.OK).body(studentReq);
+        var student = repository.findById(id);
+        if (student.isPresent()) {
+            Student studentSaved = student.get();
+            var studentUpdated = mapStudentRequestToStudent(studentReq, studentSaved);
+            studentUpdated = repository.save(studentUpdated);
+            return ResponseEntity.status(HttpStatus.OK).body(studentUpdated);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(studentReq);
     }
 
     public ResponseEntity<String> delete(Long id) {
-        Student student = studentList.get(id);
-        if (student == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student not found");
+        var student = repository.findById(id);
+        if (student.isPresent()) {
+            repository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Student Deleted successfully");
         }
-        studentList.remove(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Student Deleted successfully");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student not found");
+    }
+
+    private Student mapStudentRequestToStudent(Student request, Student studentSaved) {
+       studentSaved.setName(request.getName());
+       studentSaved.setEmail(request.getEmail());
+       studentSaved.setBirthDate(request.getBirthDate());
+       return studentSaved;
     }
 }
